@@ -206,7 +206,7 @@ def create_app(test_config=None):
             abort(400)
 
     """
-    @TODO:
+    @Done:
     Create a POST endpoint to get questions to play the quiz.
     This endpoint should take category and previous question parameters
     and return a random questions within the given category,
@@ -220,25 +220,29 @@ def create_app(test_config=None):
     def paly_quizz():
         try:
           body = request.get_json()
-          category=body.get('quiz_category',None)
-          previous_questions=body.get('previous_questions',None)
-          if ((category is None) or (previous_questions is None)):
-            abort(404)
-          if (category['id'] ==0):
-            available_questions = Question.query.filter(Question.id.notin_((previous_questions))).all()
+          cat=body.get('quiz_category',None)
+          prev_questions=body.get('previous_questions',None)
+          
+          if (cat['id'] ==0):
+            questions_av = Question.query.filter(Question.id.notin_((prev_questions))).all()
           else:
-            available_questions = Question.query.filter_by(category=category['id']).filter(Question.id.notin_((previous_questions))).all()
-          new_question=available_questions[random.randrange(0,len(available_questions))].format() if len(available_questions)>0 else None
+            questions_av = Question.query.filter_by(category=cat['id']).filter(Question.id.notin_((prev_questions))).all()
+          
+          next_question=questions_av[random.randrange(0,len(questions_av))].format() if len(questions_av)>0 else None
+          
+          if ((cat is None) or (prev_questions is None)):
+            abort(404)
+
           return jsonify({
             'success':True,
-            'question':new_question
+            'question':next_question
             })
         except:
           abort(422)
     
 
     """
-    @TODO:
+    @Done:
     Create error handlers for all expected errors
     including 404 and 422.
     """

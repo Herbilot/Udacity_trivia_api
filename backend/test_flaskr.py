@@ -162,7 +162,7 @@ class TriviaTestCase(unittest.TestCase):
 
     #test get quizz
     def test_get_quiz(self):
-        res = self.client().post('/quizzes',json={'quiz_category':{'type':'Entertainment','id':2},'previous_questions':[4,6]})
+        res = self.client().post('/quizzes',json={'quiz_category':{'type':'Art','id':2},'previous_questions':[2,4]})
         data = json.loads(res.data)
         self.assertEqual(res.status_code,200)
         self.assertEqual(data['success'],True)
