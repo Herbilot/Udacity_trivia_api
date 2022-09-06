@@ -164,7 +164,7 @@ def create_app(test_config=None):
                 question = Question(question=new_question, answer=new_answer, category=new_category, difficulty=new_difficulty)
                 question.insert()
 
-                questions_query = Question.query.order_by(Question.category).all()
+                questions_query = Question.query.order_by(Question.id).all()
                 current_questions = pagination(request, questions_query)
 
                 return jsonify({
@@ -219,16 +219,18 @@ def create_app(test_config=None):
     @app.route('/quizzes', methods=['POST'])
     def paly_quizz():
         try:
-          body = request.get_json()
-          cat=body.get('quiz_category',None)
-          prev_questions=body.get('previous_questions',None)
+          cat=request.json.get('quiz_category',None)
+          prev_questions=request.json.get('previous_questions',None)
           
           if (cat['id'] ==0):
-            questions_av = Question.query.filter(Question.id.notin_((prev_questions))).all()
+            questions_av = Question.query.filter(Question.id != prev_questions).all()
           else:
-            questions_av = Question.query.filter_by(category=cat['id']).filter(Question.id.notin_((prev_questions))).all()
+            questions_av = Question.query.filter_by(category=cat['id']).all()
           
-          next_question=questions_av[random.randrange(0,len(questions_av))].format() if len(questions_av)>0 else None
+          if len(questions_av)>0:
+            next_question=questions_av[random.randrange(0,len(questions_av))].format() 
+          else:
+            next_question = None
           
           if ((cat is None) or (prev_questions is None)):
             abort(404)
