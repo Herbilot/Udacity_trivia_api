@@ -87,12 +87,12 @@ class TriviaTestCase(unittest.TestCase):
 
     #test delete question
     def test_delete_question(self):
-        res = self.client().delete("/questions/16")
+        res = self.client().delete("/questions/11")
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
-        self.assertEqual(data["deleted_question"], 16)
+        self.assertEqual(data["deleted_question"], 11)
         self.assertTrue(data["total_questions"])
         self.assertTrue(data["questions"])
 
@@ -135,7 +135,7 @@ class TriviaTestCase(unittest.TestCase):
 
     #test search not found
     def test_search_not_found(self):
-        res = self.client().post("/questions", json={"search":"ldsknkds"})
+        res = self.client().post("/questions", json={"searchTerm":"zazazazazazazaza"})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)

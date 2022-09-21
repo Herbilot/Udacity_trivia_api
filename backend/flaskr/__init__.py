@@ -2,7 +2,8 @@ import os
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-import random
+
+from random import randrange
 import collections
 
 
@@ -223,21 +224,23 @@ def create_app(test_config=None):
           prev_questions=request.json.get('previous_questions',None)
           
           if (cat['id'] ==0):
-            questions_av = Question.query.filter(Question.id != prev_questions).all()
+            questions_av = Question.query.filter(Question.id.notin_((prev_questions))).all()
+
           else:
-            questions_av = Question.query.filter_by(category=cat['id']).all()
+            questions_av = Question.query.filter_by(category=cat['id']).filter(Question.id.notin_((prev_questions))).all()
           
           if len(questions_av)>0:
-            next_question=questions_av[random.randrange(0,len(questions_av))].format() 
+            number_of_av_questions = len(questions_av)
+            upcomming_questions=questions_av[randrange(0, number_of_av_questions)].format() 
           else:
-            next_question = None
+            upcomming_questions = None
           
           if ((cat is None) or (prev_questions is None)):
             abort(404)
 
           return jsonify({
             'success':True,
-            'question':next_question
+            'question':upcomming_questions
             })
         except:
           abort(422)
